@@ -1,0 +1,112 @@
+<%
+--[[
+
+Copyright 2019 Roland van Ipenburg
+
+This file is part of Mirza.
+
+Mirza is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Mirza is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+Mirza. If not, see <https://www.gnu.org/licenses/>.
+
+]]
+%>
+<%
+local EMPTY = ""
+local others = "content"
+local theRoot = "."
+local image = getImage(index)
+%>
+<!DOCTYPE html>
+<html lang="$model.metadata.siteLanguage.value">
+<head>
+<meta charset="utf-8">
+<title><% if image.metadata.title ~= "" then
+%><%= image.metadata.title %><%
+else
+%>Photo #<%=index %><%
+end
+%> | $model.metadata.siteTitle.value</title>
+<meta name="description" content="<% if image.metadata.title ~= "" then %>
+<%= image.metadata.description.value %>
+<% else %>Photo #<%= index %> in &quot;<%= model.metadata.siteTitle.value %>&quot;">
+<% end %>
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<link href="$theRoot/favicon.ico?$model.metadata.version" rel="shortcut icon" type="image/x-icon">
+<link href="$theRoot/i.webp?$model.metadata.version" rel="icon" sizes="144x144">
+<link href="$theRoot/a.css?$model.metadata.version" media="screen" rel="stylesheet" type="text/css" />
+<rvi:generator></rvi:generator>
+<lr:Pagination>
+	<lr:PreviousEnabled>
+		<link rel="prev" href="$link" title="Previous photo">
+	</lr:PreviousEnabled>
+	<lr:NextEnabled>
+		<link rel="next" href="$link" title="Next photo">
+		<link rel="prerender" href="$link">
+	</lr:NextEnabled>
+	<link rel="up" href="$gridPageLink#<%= image.exportFilename %>" title="Up">
+</lr:Pagination>
+</head>
+<body class="rvi-pt_<%=pageType%>">
+<header>
+	<h1><% if image.metadata.title ~= EMPTY then %>
+<%= image.metadata.title %>
+<% else %>
+	Photo #<%= index %> in <span class="rvi-alb"><%= model.metadata.siteTitle.value %></span>
+<% end %></h1>
+	<p><% if model.metadata.collectionDescription.value ~= EMPTY then %>
+	$model.metadata.collectionDescription.value
+<% else %>
+	No description available for this collection.
+<% end %></p>
+</header>
+<main>
+	<picture>
+  	<source srcset="$others/bin/images/vga/<%= image.exportFilename %>.jpg" media="(max-width: 512px)">
+  	<source srcset="$others/bin/images/svga/<%= image.exportFilename %>.jpg" media="(min-width: 512px)">
+  	<source srcset="$others/bin/images/hd/<%= image.exportFilename %>.jpg" media="(min-width: 960px)">
+  	<source srcset="$others/bin/images/full/<%= image.exportFilename %>.jpg" media="(min-width: 1920px)">
+  	<img src="$others/bin/images/full/<%= image.exportFilename %>.jpg" alt="">
+	</picture>
+	<div>
+			<p><% if image.metadata.description ~= EMPTY then %>
+			<%= image.metadata.description %>
+			<% else %>
+			No description available for this photo
+			<% end %></p>
+		</div>
+</main>
+<footer>
+	<% if numImages > 1 then %>
+		<nav class="rvi-pag">
+			<ul>
+				<lr:Pagination>
+					<lr:NextEnabled>
+						<li><a href="$link">Next photo</a></li>
+					</lr:NextEnabled>
+					<lr:NextDisabled>
+						<li><span><button disabled="disabled">Next photo</button></span></li>
+					</lr:NextDisabled>
+					<lr:PreviousEnabled>
+						<li><a href="$link">Previous photo</a></li>
+					</lr:PreviousEnabled>
+					<lr:PreviousDisabled>
+						<li><span><button disabled="disabled">Previous photo</button></span></li>
+					</lr:PreviousDisabled>
+					<li><a href="$gridPageLink#<%= image.exportFilename %>">Photo in grid</a></li>
+				</lr:Pagination>
+			</ul>
+		</nav>
+	<% end %>
+</footer>
+</body>
+</html>

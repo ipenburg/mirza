@@ -1,0 +1,102 @@
+<%
+--[[
+
+Copyright 2019 Roland van Ipenburg
+
+This file is part of Mirza.
+
+Mirza is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Mirza is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+Mirza. If not, see <https://www.gnu.org/licenses/>.
+
+]]
+%>
+<%
+	local EMPTY = ""
+    local others = "content"
+    local theRoot = "."
+%>
+<!DOCTYPE html>
+<html lang="$model.metadata.siteLanguage.value">
+<head>
+<meta charset="utf-8">
+<title>$model.metadata.siteTitle.value<% if numGridPages > 1 and page > 1 then %> page <%= page %> of <%= numGridPages %><% end %></title>
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<link href="$theRoot/favicon.ico?$model.metadata.version" rel="shortcut icon" type="image/x-icon">
+<link href="$theRoot/i.webp?$model.metadata.version" rel="icon" sizes="144x144">
+<link href="$theRoot/a.css?$model.metadata.version" media="screen" rel="stylesheet" type="text/css">
+<% if model.metadata.contactInfo.link ~= EMPTY then %>
+<link href="$model.metadata.contactInfo.link" rel="author">
+<% end %>
+<rvi:generator></rvi:generator>
+<meta name="robots" content="noindex,follow">
+<lr:Pagination>
+	<lr:PreviousEnabled>
+		<link rel="prev" href="$link" title="Previous page">
+	</lr:PreviousEnabled>
+	<lr:NextEnabled>
+		<link rel="next" href="$link" title="Next page">
+		<link rel="prerender" href="$link">
+	</lr:NextEnabled>
+	<link rel="index" href="<%= filenameOfGridPage(1) %>" title="Index">
+</lr:Pagination>
+</head>
+<body class="rvi-pt_<%=pageType%>">
+	<main>
+		<div>
+			<% if model.metadata.siteTitle.value ~= EMPTY then %>
+				<h1>$model.metadata.siteTitle.value<% if numGridPages > 1 then %> <span class="rvi-cur">page <%= page %> of <%= numGridPages %><% end %></span></h1>
+			<% end %>
+			<% if model.metadata.collectionDescription.value ~= EMPTY then %>
+				<p>$model.metadata.collectionDescription.value</p>
+			<% end %>
+	  	</div>
+		<nav class="rvi-ovv" role="navigation" aria-label="photos">
+			<ul>
+				<lr:ThumbnailGrid>
+					<lr:GridPhotoCell>
+						<li><a name="<%= image.exportFilename %>" href="<%= image.exportFilename %>.html"><img src="$others/bin/images/vga/<%= image.exportFilename %>.jpg" alt="<% if image.metadata.title ~= EMPTY then %><%= image.metadata.title %><% else %>Photo #<%= image.imageID %> in the collection <%= model.metadata.siteTitle.value %><% end %>"></a></li>
+					</lr:GridPhotoCell>
+				</lr:ThumbnailGrid>
+			</ul>
+		</nav>
+	</main>
+	<footer>
+		<% if numGridPages > 1 then %>
+			<nav class="rvi-pag" role="navigation" aria-label="pagination">
+				<ul>
+					<lr:Pagination>
+						<lr:NextEnabled>
+							<li><a href="$link">Next</a></li>
+						</lr:NextEnabled>
+						<lr:NextDisabled>
+							<li><span><button disabled="disabled">Next</button></span></li>
+						</lr:NextDisabled>
+						<lr:PreviousEnabled>
+							<li><a href="$link">Previous</a></li>
+						</lr:PreviousEnabled>
+						<lr:PreviousDisabled>
+							<li><span><button disabled="disabled">Previous</button></span></li>
+						</lr:PreviousDisabled>
+						<lr:CurrentPage>
+							<li class="rvi-cur"><a href="#" aria-label="current page page $page">$page</a></li>
+						</lr:CurrentPage>
+						<lr:OtherPages>
+							<li><a href="$link" aria-label="page $page">$page</a></li>
+						</lr:OtherPages>
+					</lr:Pagination>
+				</ul>
+			</nav>
+		<% end %>
+	</footer>
+</body>
+</html>

@@ -1,0 +1,6 @@
+tags = {
+	generator = {
+		startTag = 'write([[<meta name="generator" content="Mirza Adobe Lightroom template">]])',
+		endTag = 'write([[]])',
+	}
+}

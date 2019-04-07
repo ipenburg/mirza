@@ -1,0 +1,233 @@
+--[[
+
+Copyright 2019 Roland van Ipenburg
+
+This file is part of Mirza.
+
+Mirza is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Mirza is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+Mirza. If not, see <https://www.gnu.org/licenses/>.
+
+]]
+
+local VERSION = "v0.0.1"
+local useMultiBind = false
+local DEFAULT_LANG = "en"
+local PAGING = 120
+if not LOC then
+	LOC = function (ar)
+		return ar[1];
+	end
+end
+
+return {
+  LrSdkVersion = 2.0,
+  LrSdkMinimumVersion = 2.0,
+  title = "Mirza",
+  id = "com.rolandvanipenburg.lightroom.wpg.templates.mirza",
+  aboutBoxFile = "about.html",
+  galleryType = "lua",
+  maximumGallerySize = 17 * PAGING,
+  model = {
+    ["metadata.version"] = VERSION,
+    ["metadata.siteLanguage.value"] = DEFAULT_LANG,
+    ["metadata.siteTitle.value"] = LOC "$$$/AgWPG/Templates/HTML/DefaultValues/properties/SiteTitle=Site Title",
+    ["metadata.collectionDescription.value"] = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/CollectionDescription=Web Photo Gallery created by Adobe Lightroom.",
+    ["metadata.contactInfo.link"] = {
+      value = LOC "$$$/AgWPG/Templates/HTML/Defaults/ContactLink=mailto:user@example.com",
+      metadata = { [ "ag:dataType" ] = "webLink" },
+    },
+    ["metadata.contactInfo.value"] = LOC "$$$/AgWPG/Templates/HTML/DefaultValues/properties/ContactInfo=Contact Name",
+    ["metadata.homePage.value"] = {
+      value = "index.html",
+      metadata = { [ "ag:dataType" ] = "webLink" },
+    },
+		["photoSizes.icon.width"] = 144,
+		["photoSizes.icon.height"] = 144,
+		["photoSizes.icon.metadataExportMode"] = "copyright",
+		["photoSizes.vga.width"] = 640,
+		["photoSizes.vga.height"] = 640,
+		["photoSizes.vga.metadataExportMode"] = "copyright",
+		["photoSizes.svga.width"] = 1024,
+		["photoSizes.svga.height"] = 1024,
+		["photoSizes.svga.metadataExportMode"] = "copyright",
+		["photoSizes.hd.width"] = 1920,
+		["photoSizes.hd.height"] = 1920,
+		["photoSizes.hd.metadataExportMode"] = "copyright",
+		["photoSizes.full.width"] = 3840,
+		["photoSizes.full.height"] = 3840,
+		["photoSizes.full.metadataExportMode"] = "copyright",
+    ["photoSizes.tracking"] = false,
+    ["nonCSS.tracking"] = false,
+    ["lightroomApplication.identityPlateExport"] = "(main)",
+    ["lightroomApplication.jpegQuality"] = 70,
+    ["lightroomApplication.sizeBeingViewed"] = "vga",
+    ["lightroomApplication.useWatermark"] = true,
+    ["lightroomApplication.watermarkID"] = "",
+    ["nonCSS.imageBase"] = "content",
+    ["nonCSS.identityPlateAbsolutePath"] = "",
+    ["nonCSS.numCols"] = PAGING,
+    ["nonCSS.numRows"] = 1,
+    ["appearance.logo.display"] = false,
+    ["perImageSetting.description"] = {
+      enabled = true,
+      value = "{{com.adobe.caption}}",
+    },
+    ["perImageSetting.title"] = {
+      enabled = true,
+      value = "{{com.adobe.title}}",
+    },
+  },
+  properties = {
+    perImage = {
+      {
+        id = "title",
+        title = LOC "$$$/WPG/HTML/CSS/properties/ImageTitle=Title",
+      },
+      {
+        id = "description",
+        title = LOC "$$$/WPG/HTML/CSS/properties/ImageCaption=Caption",
+      },
+    },
+  },
+  views = function( controller, f )
+    local LrView = import "LrView"
+    local bind = LrView.bind
+    local multibind = f.multibind
+    return {
+      labels = f:panel_content {
+        bindToObject = controller,
+        f:subdivided_sections {
+          f:labeled_text_input  {
+            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/SiteLanguage=Site Language",
+            value = bind "metadata.siteLanguage.value",
+          },
+          f:labeled_text_input  {
+            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/SiteTitle=Site Title",
+            value = bind "metadata.siteTitle.value",
+          },
+          f:labeled_text_input {
+            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/CollectionDescription=Collection Description",
+            value = bind "metadata.collectionDescription.value",
+          },
+        },
+        f:subdivided_sections {
+          f:labeled_text_input  {
+            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/ContactInfo=Contact Info",
+            value = bind "metadata.contactInfo.value",
+          },
+          f:labeled_text_input  {
+            title = LOC "$$$/AgWPG/Templates/HTML/link=Web or Mail Link",
+            value = bind "metadata.contactInfo.link",
+            wraps = false,
+          },
+        },
+        f:subdivided_sections {
+          f:header_section {
+            f:checkbox_row {
+              title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/IdentityPlate=Identity Plate",
+              value = bind "appearance.logo.display",
+            },
+          },
+          f:identity_plate {
+            value = bind "lightroomApplication.identityPlateExport",
+            enabled = bind "appearance.logo.display",
+          },
+          f:labeled_text_input {
+            title = LOC "$$$/AgWPG/Templates/HTML/IdentityPlate/Link=Web or Mail Link",
+            value = bind "metadata.homePage.value",
+            wraps = false,
+          },
+        },
+      },
+      colorPalette = f:panel_content {
+        bindToObject = controller,
+        f:subdivided_sections {
+          f:header_section_label {
+            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/Appearance/Main=Unavailable",
+          },
+        },
+      },
+      appearanceConfiguration = f:panel_content {
+        bindToObject = controller,
+        f:subdivided_sections {
+          f:header_section_label {
+            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/Appearance/Images=Images",
+          },
+          f:slider_content_column {
+            f:slider_row {
+              title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/MaximumImageSizeLabel/LargePreview=Size",
+              value = useMultiBind and multibind {
+                "photoSizes.full.width",
+                "photoSizes.full.height",
+                "appearance.liveUpdateImageSize.maxSize",
+              }
+              or bind "photoSizes.full.width",
+              tracking = bind "nonCSS.tracking",
+              unit = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/ImageSizeUnit=px",
+              max = 3840,
+              min = 320,
+              width_in_digits = 4,
+              precision = 0,
+            },
+          },
+        },
+      },
+      outputSettings = f:panel_content {
+        bindToObject = controller,
+        f:subdivided_sections {
+          f:slider_content_column {
+            f:metadataModeControl {
+              value = useMultiBind and multibind {
+                "photoSizes.vga.metadataExportMode",
+                "photoSizes.full.metadataExportMode",
+              }
+              or bind "photoSizes.vga.metadataExportMode",
+            },
+          },
+        },
+        f:subdivided_sections {
+          f:header_section_label {
+            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/ImageHandling=Full Images",
+          },
+          f:slider_content_column {
+            f:slider_row {
+              title = LOC "$$$/AgWPG/Templates/HTML/Panel/Labels/MaximumImageSizeLabel/JPEGQualityLabel=Quality",
+              value = bind "lightroomApplication.jpegQuality",
+              tracking = bind "lightroomApplication.jpegQuality.tracking",
+              tracking_value = "qualityTracking",
+              unit = "",
+              max = 100,
+              min = 0,
+              width_in_digits = 4,
+              precision = 0,
+            },
+            f:metadataModeControl {
+              value = useMultiBind and multibind {
+                "photoSizes.vga.metadataExportMode",
+                "photoSizes.full.metadataExportMode",
+              }
+              or bind "photoSizes.vga.metadataExportMode",
+            },
+          },
+          f:slider_content_column {
+            f:checkbox_row {
+              title = LOC "$$$/AgWPG/Templates/HTML/Panel/Checkbox/UseWatermark=Add Copyright Watermark",
+              value = bind "lightroomApplication.useWatermark",
+              indent_with_sliders = true,
+            },
+          },
+          f:watermark_section( controller ),
+        },
+      },
+    }
+  end,
+}
